@@ -1,0 +1,251 @@
+<html>
+    <head>
+        <!-- Tambahkan ini di bagian head -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <title>HRLD Room</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="navbar.css">
+        <link rel="stylesheet" href="form.css">
+    </head>
+    <body>
+
+            <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <span class="logo-black">Booking</span><span class="logo-blue">Ruangan</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">Booking</a>
+                <a href="pages/daftar-ruangan.html" class="nav-link">Daftar Ruangan</a>
+                <a href="pages/dashboard.html" class="nav-link">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+<!-- Main Content -->
+    <main class="main-section">
+        <div class="form-container">
+            <h2 class="form-title">Booking Form</h2>
+            <form id="bookingForm" class="booking-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="npk" class="form-label required">NPK</label>
+                        <input type="number" id="npk" class="form-input" placeholder="Masukkan NPK" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="programOwner" class="form-label required">Program Owner</label>
+                        <input type="text" id="programOwner" class="form-input" placeholder="Nama Program Owner" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate" class="form-label required">Tanggal Mulai</label>
+                        <input type="text" id="startDate" class="form-input datepicker" placeholder="mm/dd/yyyy hh:mm" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDate" class="form-label required">Tanggal Selesai</label>
+                        <input type="text" id="endDate" class="form-input datepicker" placeholder="mm/dd/yyyy hh:mm" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lokasi" class="form-label required">Lokasi</label>
+                        <select id="lokasi" class="form-select" required>
+                            <option value="">Pilih Lokasi</option>
+                            <option value="permata learning center">Permata Learning Center</option>
+                            <option value="permata bank bintaro">Permata Bank Bintaro</option>
+                            <option value="permata bank wtc 2">Permata Bank WTC 2</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ruangan" class="form-label required">Ruangan</label>
+                        <select id="ruangan" class="form-select" required>
+                            <option value="">Pilih Ruangan</option>
+                            <option value="Partnership">Partnership</option>
+                            <option value="Responsive">Responsive</option>
+                            <option value="Innovation">Innovation</option>
+                            <option value="Care">Care</option>
+                            <option value="Execellence">Execellence</option>
+                            <option value="4E">4E</option>
+                            <option value="Computerroom">Computer Room</option>
+                            <option value="Meetingroom">Meeting Room</option>
+                            <option value="Library">Library</option>
+                            <option value="Simulationbanking">Simulation Banking</option>
+                            <option value="ResponsivedanInnovation">Responsive dan Innovation</option>
+                            <option value="CaredanExecellence">Care dan Execellence</option>
+                            <option value="Execellencedan4E">Execellence dan 4E</option>
+                            <option value="Care-4E">Care - 4E</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mediaTraining" class="form-label required">Media Training</label>
+                        <select id="mediaTraining" class="form-select" required>
+                            <option value="">Pilih Media Training</option>
+                            <option value="Offline">Offline</option>
+                            <option value="Online">Online</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="namaTraining" class="form-label required">Nama Training</label>
+                        <input type="text" id="namaTraining" class="form-input" placeholder="Nama Training" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">Booking</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <p>@Copyright 2024 HRLD Room Booking System</p>
+    </footer>
+
+        <script type="module">
+              // Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+import { 
+    getDatabase, 
+    ref, 
+    push, 
+    serverTimestamp,
+    get,
+    query,
+    orderByChild,
+    equalTo 
+} from "https://www.gstatic.com/firebasejs/9.19.1/firebase-database.js";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDv61Bh-XGWfJ6yBeqVlLvR1kGlxe8zYzI",
+    authDomain: "reservasiruangan-c0321.firebaseapp.com",
+    databaseURL: "https://reservasiruangan-c0321-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "reservasiruangan-c0321",
+    storageBucket: "reservasiruangan-c0321.firebasestorage.app",
+    messagingSenderId: "1076795288921",
+    appId: "1:1076795288921:web:fdf68887b5030420393048"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Inisialisasi flatpickr untuk input tanggal
+const startDatePicker = flatpickr("#startDate", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+    minDate: "today",
+    time_24hr: true
+});
+
+const endDatePicker = flatpickr("#endDate", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+    minDate: "today",
+    time_24hr: true
+});
+
+// Event listener untuk form submission
+document.getElementById('bookingForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const submitButton = this.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    try {
+        // Mengumpulkan data form
+        const formData = {
+            npk: document.getElementById("npk").value,
+            programOwner: document.getElementById("programOwner").value,
+            startDate: document.getElementById("startDate").value,
+            endDate: document.getElementById("endDate").value,
+            lokasi: document.getElementById("lokasi").value,
+            ruangan: document.getElementById("ruangan").value,
+            mediaTraining: document.getElementById("mediaTraining").value,
+            namaTraining: document.getElementById("namaTraining").value
+        };
+
+        // Validasi semua field harus diisi
+        if (!formData.npk || !formData.programOwner || !formData.startDate || 
+            !formData.endDate || !formData.lokasi || !formData.ruangan || 
+            !formData.mediaTraining || !formData.namaTraining) {
+            throw new Error("Semua field harus diisi");
+        }
+
+        // Validasi waktu
+        const startTime = new Date(formData.startDate).getTime();
+        const endTime = new Date(formData.endDate).getTime();
+        
+        if (startTime >= endTime) {
+            throw new Error("Waktu selesai harus lebih besar dari waktu mulai");
+        }
+
+        // Cek ketersediaan ruangan
+        const bookingsRef = ref(db, 'bookings');
+        const roomQuery = query(
+            bookingsRef,
+            orderByChild('ruangan'),
+            equalTo(formData.ruangan)
+        );
+
+        const snapshot = await get(roomQuery);
+        let isAvailable = true;
+
+        if (snapshot.exists()) {
+            const bookings = snapshot.val();
+            for (const key in bookings) {
+                const booking = bookings[key];
+                const existingStartTime = new Date(booking.startDate).getTime();
+                const existingEndTime = new Date(booking.endDate).getTime();
+
+                if ((startTime >= existingStartTime && startTime < existingEndTime) ||
+                    (endTime > existingStartTime && endTime <= existingEndTime) ||
+                    (startTime <= existingStartTime && endTime >= existingEndTime)) {
+                    isAvailable = false;
+                    break;
+                }
+            }
+        }
+
+        if (!isAvailable) {
+            alert("Maaf, ruangan sudah direservasi pada waktu tersebut. Silakan pilih waktu lain.");
+            return;
+        }
+
+        // Simpan booking ke database
+        const bookingData = {
+            ...formData,
+            createdAt: serverTimestamp()
+        };
+
+        try {
+            await push(bookingsRef, bookingData);
+            alert("Booking berhasil!");
+        
+            // Reset form
+            this.reset();
+            startDatePicker.clear();
+            endDatePicker.clear();
+        } catch (error) {
+            console.error("Error saving booking:", error);
+            throw new Error("Terjadi kesalahan saat menyimpan booking. Silakan coba lagi.");
+        }
+
+    } catch (error) {
+        console.error("Error during booking process:", error);
+        alert(error.message || "Terjadi kesalahan saat booking. Silakan coba lagi.");
+    } finally {
+        submitButton.disabled = false;
+    }
+});
+            
+        </script>
+    </body>
+</html>

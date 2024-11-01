@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HRLD Room</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="navbar.css">
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin-top: 20px; /* Menambah jarak dari navbar */
+        }
+
+        .dashboard-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px; /* Menambah jarak antara judul dan tabel */
+        }
+
+        .table-container {
+            width: 95%;
+            margin: 0 auto; /* Membuat tabel berada di tengah */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #0064ff;
+        }
+
+        th, td {
+            border: 1px solid #f2f2f2;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #002850;
+        }
+
+        .footer {
+        margin-top: auto; /* Mengubah margin-top menjadi auto */
+        padding: 20px;
+        text-align: center;
+        width: 100%;
+        position: fixed; /* Menambah ini */
+        bottom: 0; /* Menambah ini */
+        
+    }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <span class="logo-black">Booking</span><span class="logo-blue">Ruangan</span>
+            </div>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Booking</a>
+                <a href="daftar-ruangan.html" class="nav-link">Daftar Ruangan</a>
+                <a href="dashboard.html" class="nav-link active">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2 class="dashboard-title">Data Booking Ruangan</h2>
+        <button id="downloadBtn" class="download-btn">Download Data</button>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr class="bg-blue-500 text-white">
+                        <th>NPK</th>
+                        <th>Program Owner</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Lokasi</th>
+                        <th>Ruangan</th>
+                        <th>Media Training</th>
+                        <th>Jam</th>
+                        <th>Nama Training</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingTableBody">
+                    <!-- Data akan diisi secara dinamis -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <p>@Copyright 2024 HRLD Room Booking System</p>
+    </footer>
+
+    <script type="module">
+        // Script Firebase tetap sama seperti sebelumnya
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDv61Bh-XGWfJ6yBeqVlLvR1kGlxe8zYzI",
+            authDomain: "reservasiruangan-c0321.firebaseapp.com",
+            databaseURL: "https://reservasiruangan-c0321-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "reservasiruangan-c0321",
+            storageBucket: "reservasiruangan-c0321.firebasestorage.app",
+            messagingSenderId: "1076795288921",
+            appId: "1:1076795288921:web:fdf68887b5030420393048"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const bookingsRef = ref(db, 'bookings');
+
+        onValue(bookingsRef, (snapshot) => {
+            const data = snapshot.val();
+            updateTable(data);
+        });
+
+        function updateTable(data) {
+            const tableBody = document.getElementById('bookingTableBody');
+            tableBody.innerHTML = '';
+
+            for (let key in data) {
+                const booking = data[key];
+                const row = tableBody.insertRow();
+
+                row.insertCell().textContent = booking.npk;
+                row.insertCell().textContent = booking.programOwner;
+                row.insertCell().textContent = booking.startDate;
+                row.insertCell().textContent = booking.endDate;
+                row.insertCell().textContent = booking.lokasi;
+                row.insertCell().textContent = booking.ruangan;
+                row.insertCell().textContent = booking.mediaTraining;
+                row.insertCell().textContent = booking.namaTraining;
+                row.insertCell().textContent = '';
+            }
+        }
+        function tableToCSV() {
+    const table = document.querySelector('table');
+    let csv = [];
+    for (let i = 0; i < table.rows.length; i++) {
+        let row = [], cols = table.rows[i].cells;
+        for (let j = 0; j < cols.length; j++) {
+            row.push(cols[j].innerText);
+        }
+        csv.push(row.join(","));
+    }
+    return csv.join("\n");
+}
+
+function downloadCSV(csv) {
+    const csvFile = new Blob([csv], {type: "text/csv"});
+    const downloadLink = document.createElement("a");
+    downloadLink.download = "booking_data.csv";
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
+
+document.getElementById('downloadBtn').addEventListener('click', function() {
+    const csv = tableToCSV();
+    downloadCSV(csv);
+});
+    </script>
+</body>
+</html>
